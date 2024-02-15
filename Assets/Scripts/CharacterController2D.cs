@@ -7,18 +7,29 @@ public class CharacterController2D : MonoBehaviour
     [SerializeField]
     private Rigidbody2D playerRB;
     private Vector3 moveInput;
-    public int moveSpeed = 2;
+    public int moveSpeed = 5;
+    public int speedMultiplier = 2;
     [SerializeField]
     private Animator playerAnim;
+    public bool IsSprinting;
 
     void Awake()
     {
+        IsSprinting = false;
         playerRB = gameObject.GetComponent<Rigidbody2D>();
     }
     // Update is called once per frame
     void Update()
     {
         moveInput = new Vector3(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"), 0);
+        if(Input.GetButton("Sprint"))
+        {
+            IsSprinting = true;
+        }
+        else
+        {
+            IsSprinting = false;
+        }
     }
     void FixedUpdate()
     {
@@ -32,11 +43,25 @@ public class CharacterController2D : MonoBehaviour
         }
         else
         {
-            playerAnim.SetBool("IsIdle", false);
-            playerRB.MovePosition(transform.position + moveInput.normalized * moveSpeed * Time.fixedDeltaTime);
-            playerAnim.SetFloat("InputX", moveInput.x);
-            playerAnim.SetFloat("InputY", moveInput.y);
-            CheckDirection();
+            if(IsSprinting)
+            {
+                playerAnim.speed = speedMultiplier;
+                playerAnim.SetBool("IsIdle", false);
+                playerRB.MovePosition(transform.position + moveInput.normalized * moveSpeed * speedMultiplier * Time.fixedDeltaTime);
+                playerAnim.SetFloat("InputX", moveInput.x);
+                playerAnim.SetFloat("InputY", moveInput.y);
+
+                CheckDirection();
+            }
+            else
+            {
+                playerAnim.speed = 1; //Defult playback speed
+                playerAnim.SetBool("IsIdle", false);
+                playerRB.MovePosition(transform.position + moveInput.normalized * moveSpeed * Time.fixedDeltaTime);
+                playerAnim.SetFloat("InputX", moveInput.x);
+                playerAnim.SetFloat("InputY", moveInput.y);
+                CheckDirection();
+            }
         }
     }
     void CheckDirection()
