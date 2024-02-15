@@ -34,6 +34,7 @@ public class CharacterController2D : MonoBehaviour
     void FixedUpdate()
     {
         Move();
+        CloseGame();
     }
     void Move()
     {
@@ -94,6 +95,14 @@ public class CharacterController2D : MonoBehaviour
             playerAnim.SetBool("IsFacingUp", false);
             playerAnim.SetBool("IsFacingLeft", false);
             playerAnim.SetBool("IsFacingRight", false);
+        }
+    }
+    void CloseGame()
+    {
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            Debug.Log("Closing game");
+            Application.Quit();
         }
     }
 
